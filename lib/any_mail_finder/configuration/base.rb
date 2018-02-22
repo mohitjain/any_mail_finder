@@ -1,7 +1,6 @@
 module AnyMailFinder
   module Configuration
     class Base
-
       def default_email_api_reponse
         @default_email_api_reponse
       end
