@@ -7,7 +7,7 @@ module AnyMailFinder
       @domain = domain
     end
 
-    def validate
+    def execute
       options = { domain: domain }
       post path, options
     end

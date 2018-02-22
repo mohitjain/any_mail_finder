@@ -15,7 +15,7 @@ module AnyMailFinder
       end
     end
 
-    def find_email
+    def find_emails
       post path, query_params
     end
 
