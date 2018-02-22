@@ -1,5 +1,7 @@
 require_relative "any_mail_finder/version"
 require_relative "any_mail_finder/configuration/base"
+require "httparty"
+require "recursive-open-struct"
 module AnyMailFinder
   def self.configuration
     @configuration ||= AnyMailFinder::Configuration::Base.new

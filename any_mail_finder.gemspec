@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Mohit Jain"]
   spec.email         = ["jain.mohit27@gmail.com"]
 
-  gem.description   = 'Ruby client for AnyMailFinder API'
-  gem.summary       = 'Ruby client for AnyMailFinder API'
-  gem.homepage      = 'https://github.com/mohitjain/any_mail_finder'
+  spec.description   = 'Ruby client for AnyMailFinder API'
+  spec.summary       = 'Ruby client for AnyMailFinder API'
+  spec.homepage      = 'https://github.com/mohitjain/any_mail_finder'
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

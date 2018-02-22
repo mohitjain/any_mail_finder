@@ -29,7 +29,6 @@ module AnyMailFinder
         raise AnyMailFinder::Error, e.message
       rescue => e
         raise AnyMailFinder::Error, e.message
-      end
     end
 
     def data_key(request_type)
