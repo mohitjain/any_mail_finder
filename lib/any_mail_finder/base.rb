@@ -6,16 +6,25 @@ module AnyMailFinder
     API_HOST = 'https://api.anymailfinder.com/v4.0'
 
     def get(url, options = {})
-      options[:apikey] = AnyMailFinder.configuration.api_key
+      request('get', url, options)
+    end
+
+    def post(url, options = {})
+      request('post', url, options)
+    end
+
+    private
+
+    def request(request_type, url, options)
       begin
-        response = self.class.get(url, options)
-        data = JSON.parse response.body, {symbolize_names: true}
-        case response.code
-          when 200
-            return RecursiveOpenStruct.new(data)
-          else
-            raise AnyMailFinder::Error, data[:errors][:user]
-        end
+      response = HTTParty.public_send(
+        request_type,
+        url,
+        headers: AnyMailFinder.configuration.headers,
+        data_key(request_type).to_sym => options,
+      )
+      data = JSON.parse response.body, { symbolize_names: true }
+      return RecursiveOpenStruct.new(data)
       rescue Errno::ECONNREFUSED => e
         raise AnyMailFinder::Error, e.message
       rescue HTTParty::Error => e
@@ -23,6 +32,10 @@ module AnyMailFinder
       rescue => e
         raise AnyMailFinder::Error, e.message
       end
+    end
+
+    def data_key(request_type)
+      request_type == "post" ? 'body' : 'query'
     end
 
   end

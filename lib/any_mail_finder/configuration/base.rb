@@ -17,6 +17,12 @@ module AnyMailFinder
       def api_key=(api_key)
         @api_key = api_key
       end
+
+      def headers
+        {
+          "X-Api-Key" => api_key
+        }
+      end
     end
   end
 end

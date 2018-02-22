@@ -1,18 +1,8 @@
 module AnyMailFinder
   class HitsLeft < Base
-    API_PATH = '/emails.json'
-    attr_accessor :email
-
-    def initialize(email = nil)
-      @email = email
-    end
-
+    API_PATH = '/account/hits_left.json'
     def execute
-      if AnyMailFinder.configuration.default_email_api_reponse.present?
-        return RecursiveOpenStruct.new(AnyMailFinder.configuration.default_email_api_reponse)
-      end
-      options = {address: email}
-      data = get path, options
+      data = get path, {}
     end
 
     private

@@ -1,6 +1,6 @@
 module AnyMailFinder
   class Email < Base
-    API_PATH = '/emails.json'
+    API_PATH = '/validate.json'
     attr_accessor :email
 
     def initialize(email = nil)
@@ -8,11 +8,8 @@ module AnyMailFinder
     end
 
     def validate
-      if AnyMailFinder.configuration.default_email_api_reponse.present?
-        return RecursiveOpenStruct.new(AnyMailFinder.configuration.default_email_api_reponse)
-      end
-      options = {address: email}
-      data = get path, options
+      options = { email: email }
+      post path, options
     end
 
     private
