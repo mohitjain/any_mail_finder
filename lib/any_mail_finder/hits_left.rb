@@ -3,7 +3,7 @@ module AnyMailFinder
     API_PATH = '/account/hits_left.json'.freeze
 
     def execute
-      data = get path, {}
+      get path, {}
     end
 
     private
