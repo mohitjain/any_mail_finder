@@ -1,6 +1,7 @@
 module AnyMailFinder
   class Domain < Base
-    API_PATH = '/domains/check.json'
+    API_PATH = '/domains/check.json'.freeze
+    
     attr_accessor :domain
 
     def initialize(domain = nil)
@@ -17,6 +18,5 @@ module AnyMailFinder
     def path
       API_HOST + API_PATH
     end
-
   end
 end

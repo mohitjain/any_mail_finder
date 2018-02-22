@@ -1,15 +1,17 @@
 module AnyMailFinder
   class Person < Base
-    API_PATH = '/search/person.json'
+    API_PATH = '/search/person.json'.freeze
     ACCEPTABLE_KEYS = [
       :full_name,
       :first_name,
       :last_name,
       :domain,
       :company_name,
-    ]
+    ].freeze
+
     attr_accessor :options
     attr_accessor *ACCEPTABLE_KEYS
+
     def initialize(options = {})
       self.options = options.with_indifferent_access
       ACCEPTABLE_KEYS.each do |key|
@@ -30,6 +32,5 @@ module AnyMailFinder
     def path
       API_HOST + API_PATH
     end
-
   end
 end

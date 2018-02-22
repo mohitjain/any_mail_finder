@@ -1,6 +1,7 @@
 module AnyMailFinder
   class HitsLeft < Base
-    API_PATH = '/account/hits_left.json'
+    API_PATH = '/account/hits_left.json'.freeze
+
     def execute
       data = get path, {}
     end
@@ -10,6 +11,5 @@ module AnyMailFinder
     def path
       API_HOST + API_PATH
     end
-
   end
 end

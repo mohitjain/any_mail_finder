@@ -3,7 +3,7 @@ require "breaker"
 module AnyMailFinder
   class Base
     include HTTParty
-    API_HOST = 'https://api.anymailfinder.com/v4.0'
+    API_HOST = 'https://api.anymailfinder.com/v4.0'.freeze
 
     def get(url, options = {})
       request('get', url, options)
@@ -37,6 +37,5 @@ module AnyMailFinder
     def data_key(request_type)
       request_type == "post" ? 'body' : 'query'
     end
-
   end
 end

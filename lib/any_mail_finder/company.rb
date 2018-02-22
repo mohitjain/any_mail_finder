@@ -1,12 +1,14 @@
 module AnyMailFinder
   class Company < Base
-    API_PATH = '/search/company.json'
+    API_PATH = '/search/company.json'.freeze
     ACCEPTABLE_KEYS = [
       :domain,
       :company_name,
-    ]
+    ].freeze
+
     attr_accessor :options
     attr_accessor *ACCEPTABLE_KEYS
+    
     def initialize(options = {})
       self.options = options.with_indifferent_access
       ACCEPTABLE_KEYS.each do |key|
@@ -27,6 +29,5 @@ module AnyMailFinder
     def path
       API_HOST + API_PATH
     end
-
   end
 end
