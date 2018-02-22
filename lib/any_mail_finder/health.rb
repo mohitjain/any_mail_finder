@@ -1,6 +1,6 @@
 module AnyMailFinder
   class Health < Base
-    API_PATH = '/health.json'.freeze
+    API_PATH = "/health.json".freeze
 
     def execute
       get path, {}

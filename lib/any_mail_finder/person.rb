@@ -1,6 +1,6 @@
 module AnyMailFinder
   class Person < Base
-    API_PATH = '/search/person.json'.freeze
+    API_PATH = "/search/person.json".freeze
     ACCEPTABLE_KEYS = [
       :full_name,
       :first_name,

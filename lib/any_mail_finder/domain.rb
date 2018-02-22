@@ -1,6 +1,6 @@
 module AnyMailFinder
   class Domain < Base
-    API_PATH = '/domains/check.json'.freeze
+    API_PATH = "/domains/check.json".freeze
     attr_accessor :domain
 
     def initialize(domain = nil)

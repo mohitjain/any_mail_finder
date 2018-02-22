@@ -1,6 +1,6 @@
 module AnyMailFinder
   class Email < Base
-    API_PATH = '/validate.json'.freeze
+    API_PATH = "/validate.json".freeze
     attr_accessor :email
 
     def initialize(email = nil)

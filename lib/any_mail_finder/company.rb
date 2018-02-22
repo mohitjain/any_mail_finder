@@ -1,6 +1,6 @@
 module AnyMailFinder
   class Company < Base
-    API_PATH = '/search/company.json'.freeze
+    API_PATH = "/search/company.json".freeze
     ACCEPTABLE_KEYS = [
       :domain,
       :company_name,
