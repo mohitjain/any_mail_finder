@@ -26,7 +26,7 @@ module AnyMailFinder
     private
 
     def query_params
-      ACCEPTABLE_KEYS.inject({}) {|hash, key| hash.merge!(key => options[key]) }
+      ACCEPTABLE_KEYS.inject({}) { |hash, key| hash.merge!(key => options[key]) }
     end
 
     def path

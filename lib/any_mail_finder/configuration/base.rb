@@ -20,7 +20,7 @@ module AnyMailFinder
 
       def headers
         {
-          "X-Api-Key" => api_key
+          "X-Api-Key" => api_key,
         }
       end
     end
