@@ -18,12 +18,10 @@ module AnyMailFinder
   end
 end
 
-
-require_relative 'any_mail_finder/base'
+require_relative "any_mail_finder/base"
 require_relative "any_mail_finder/company"
 require_relative "any_mail_finder/email"
 require_relative "any_mail_finder/error"
 require_relative "any_mail_finder/health"
 require_relative "any_mail_finder/hits_left"
 require_relative "any_mail_finder/person"
-require "breaker"
