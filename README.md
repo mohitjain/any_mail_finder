@@ -1,196 +1,111 @@
-# AnyMailFinder
+# any_mail_finder
 
-The un-official AnyMailFinder(https://anymailfinder.com/) API Client for Ruby
+An unofficial Ruby client for the [Anymailfinder](https://anymailfinder.com/) API: find a person's or a company's
+email addresses and check whether an address is valid.
 
-## Installation
+Every call returns the API's JSON as a nested struct, so you read fields with dot syntax (`response.email`).
 
-Add this line to your application's Gemfile:
+> Not affiliated with Anymailfinder. The gem is at version 0.1.0 and its tests are minimal.
+
+## Install
 
 ```ruby
 gem 'any_mail_finder'
 ```
 
-And then execute:
+Then `bundle`, or `gem install any_mail_finder`. The gem uses `httparty` and `recursive-open-struct`, and expects
+ActiveSupport to be loaded (any Rails app has it).
 
-    $ bundle
+## Configure
 
-Or install it yourself as:
-
-    $ gem install any_mail_finder
-
-## Usage
-
-Create a configuration file and put it in your initializers config/initializers/any_mail_finder.rb
+In a Rails app, `config/initializers/any_mail_finder.rb`:
 
 ```ruby
 AnyMailFinder.configure do |config|
-  config.api_key = "-----Api ----- key -----"
+  config.api_key = ENV.fetch("ANYMAILFINDER_API_KEY")
 end
 ```
 
-All response will be nested struct object.
+Keep the key in an environment variable or your credentials store, never in the repository.
 
-### Check the status of the API
+## Use
 
-```ruby
-  response = AnyMailFinder::Health.new.execute
-  #response.healthy => true
-  #response.status => "success"
-```
-
-### Checking how many searches you have left
+### Account and API status
 
 ```ruby
-  response = AnyMailFinder::HitsLeft.new.execute
-  #response.credits_left => 5000
-  #response.status => "success"
+AnyMailFinder::Health.new.execute      # => response.healthy, response.status
+AnyMailFinder::HitsLeft.new.execute    # => response.credits_left, response.status
 ```
 
-### Performing an email search (Personal email)
-To perform an email search of a specific person. You can pass the arguments as hash like mentioned below.
+### Find one person's email
 
->You must provide either a `domain` or a `company_name`. Providing a `domain` will yield better results than a `company_name`.
-
-> You must provide either a `full_name`, or both a `first_name` and a `last_name`.
+Give a `domain` (better results) or a `company_name`, and either a `full_name` or both `first_name` and `last_name`.
 
 ```ruby
-  options = {
-    full_name: "John Doe",
-    first_name: "John",
-    last_name: "Doe",
-    domain: "facebook.com",
-    company_name: "Facebook",
-  }
+person = AnyMailFinder::Person.new(full_name: "John Doe", domain: "example.com")
+response = person.find_email
 
-  person = AnyMailFinder::Person.new(options)
-  response = person.find_email
-
-  #response.email => "jsmith@acme.com",
-  #response.email_class => "verified",
-  #response.alternatives => [ "john@acme.com", "smithj@acme.com" ]
-  #response.input.full_name => "John Smith"
-  #response.input.company_name => "Acme Inc"  
-  #response.domain => "acme.com",
-  #response.status => "success"
+response.email          # => "jdoe@example.com"
+response.email_class    # => "verified"
+response.alternatives   # => ["john@example.com", "doej@example.com"]
+response.status         # => "success"
 ```
-  or also set them one by one
+
+You can also set the fields one at a time (`person.first_name = "John"`) before calling `find_email`.
+
+### Find all emails at a company
+
+A `domain` or a `company_name` is required.
 
 ```ruby
-  person = AnyMailFinder::Person.new
-  person.full_name = "John Doe"
-  person.first_name = "John"
-  person.last_name = "Doe"
-  person.domain = "facebook.com"
-  person.company_name = "Facebook"
-  response = person.find_email
-  #response.email => "jsmith@acme.com",
-  #response.email_class => "verified",
-  #response.alternatives => [ "john@acme.com", "smithj@acme.com" ]
-  #response.input.full_name => "John Smith"
-  #response.input.company_name => "Acme Inc"  
-  #response.domain => "acme.com",
-  #response.status => "success"
+response = AnyMailFinder::Company.new(domain: "example.com").find_emails
+
+response.emails         # => ["john@example.com", "mark@example.com"]
+response.email_class    # => "not_verified"
 ```
 
-### Performing an email search (All emails)
-To retrieve a list of emails at a particular domain/company
-
-> A domain or a company_name is required.
+### Check an email address
 
 ```ruby
-options = {
-  domain: "facebook.com",
-  company_name: "Facebook",
-}
+response = AnyMailFinder::Email.new("johndoe@example.com").validate
 
-response = AnyMailFinder::Company.new(options).find_emails
-
-#response.emails => ["john@acme.net", "mark@acme.com", "joe@acme.com"],
-#response.email_class => "not_verified",
-#response.input.domain => "acme.com"
-#response.domain => nil
-#response.status => "success"
-
+response.email_verified # => true
 ```
 
-or
-```ruby
-  domain_emails = AnyMailFinder::Company.new
-  domain_emails.domain = "facebook.com"
-  domain_emails.company_name = "facebook.com"
-  #response.emails => ["john@acme.net", "mark@acme.com", "joe@acme.com"],
-  #response.email_class => "not_verified",
-  #response.input.domain => "acme.com"
-  #response.domain => nil
-  #response.status => "success"
-```
+### Check what the API knows about a domain
 
-### Validating an email
-To validate an email address
+`Domain` is not loaded by default, so require it first. It takes the domain as a string:
 
 ```ruby
-email = "johndoe@example.com"
-response = AnyMailFinder::Email.new(email).validate
-#response.email_verified => true
-#response.input.email => "johndoe@example.com"
-#response.status => "success"
+require "any_mail_finder/domain"
+
+response = AnyMailFinder::Domain.new("example.com").execute
+
+response.is_blacklisted # => false
+response.person_search  # => true
+response.domain_search  # => true
+response.domain_count   # => 3
 ```
 
-or
+## Errors
 
-```ruby
-email = "johndoe@example.com"
-email_validator = AnyMailFinder::Email.new
-email_validator.email = email
-response = email_validator.validate
-#response.email_verified => true
-#response.input.email => "johndoe@example.com"
-#response.status => "success"
-```
-
-### Check domain status
-To check what kind of info we have on a particular domain
-
-```ruby
-AnyMailFinder::Domain.new({
-  domain: "facebook.com",
-})
-#response.status => "success"
-#response.is_blacklisted => false
-#response.person_search => true
-#response.domain_search => true
-#response.domain_count => 3
-#response.input.domain => "acme.com"
-```
-
-or
-
-```ruby
-domain_check = AnyMailFinder::Domain.new
-domain_check.domain = "facebook.com"
-domain_check.execute
-#response.status => "success"
-#response.is_blacklisted => false
-#response.person_search => true
-#response.domain_search => true
-#response.domain_count => 3
-#response.input.domain => "acme.com"
-```
+Network and API failures raise `AnyMailFinder::Error` with the underlying message.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+```
+bin/setup        # install dependencies
+bundle exec rake spec
+bin/console      # a console with the gem loaded
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Releases: bump `lib/any_mail_finder/version.rb`, then `bundle exec rake release`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/any_mail_finder. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome at https://github.com/mohitjain/any_mail_finder. Contributors are expected
+to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the AnyMailFinder project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/any_mail_finder/blob/master/CODE_OF_CONDUCT.md).
+[MIT](LICENSE.txt).
